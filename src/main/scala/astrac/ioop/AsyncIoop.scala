@@ -21,6 +21,12 @@ class AsyncIoop(implicit ec: ExecutionContext) extends (IoopAst ~> Future) {
     case CreateFile(p) => Future(blocking(Helper.create(p))).consumeTry
 
     case DeleteFile(p) => Future(blocking(Helper.delete(p))).consumeTry
+
+    case ReadFile(p, h) => Future(blocking(Helper.read(p, h))).consumeTry
+
+    case WriteFile(p, d) => Future(blocking(Helper.write(p, d))).consumeTry
+
+    case IoFailure(ex) => Future.failed(ex)
   }
 }
 

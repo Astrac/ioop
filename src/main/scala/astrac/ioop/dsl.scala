@@ -21,6 +21,8 @@ object dsl {
     case object SucceedIfAbsent extends DeleteMode
   }
 
+  case class FileResource(file: Path)
+
   type Ioop[T] = Free[IoopAst, T]
 
   def value[T](content: T): Ioop[T] =
@@ -63,10 +65,12 @@ object dsl {
     } yield d
   }
 
-  // def copy(src: Path, dest: Path) =
-  //   Free.liftF(CopyFile(src, dest))
+  def write(path: Path, data: Iterable[String]): Ioop[Unit] = Free.liftF(WriteFile(path, data))
 
-  // def move(src: Path, dest: Path) =
-  //   Free.liftF(MoveFile(src, dest))
+  def read[Out](path: Path, handler: Iterable[String] => Out): Ioop[Out] = Free.liftF(ReadFile(path, handler))
 
+  def transform(source: Path, target: Path, handler: Iterable[String] => Iterable[String]): Ioop[Unit] = for {
+    d <- read(source, handler)
+    _ <- write(target, d)
+  } yield ()
 }

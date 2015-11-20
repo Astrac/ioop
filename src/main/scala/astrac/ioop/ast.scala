@@ -14,6 +14,6 @@ case class CreateFile(path: Path) extends IoopAst[Unit]
 
 case class DeleteFile(path: Path) extends IoopAst[Unit]
 
-// case class CopyFile(src: Path, dest: Path) extends IoopM[Unit]
+case class WriteFile(path: Path, data: Iterable[String]) extends IoopAst[Unit]
 
-// case class MoveFile(src: Path, dest: Path) extends IoopM[Unit]
+case class ReadFile[Out](path: Path, handler: Iterable[String] => Out) extends IoopAst[Out]

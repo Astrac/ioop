@@ -4,6 +4,7 @@ import cats.{~>, Id, Monad}
 import dsl._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.language.higherKinds
 
 trait Filesystem[M[_]] {
   implicit def monad: Monad[M]

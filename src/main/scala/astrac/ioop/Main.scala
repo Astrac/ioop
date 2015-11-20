@@ -15,6 +15,7 @@ object Main extends App {
     _ = println(s"Exists: $e")
     _ <- if (e) delete(f) else create(f)
     r <- exists(f)
+    w <- write(f, "foobar" :: "baz" :: Nil)
   } yield r
 
   println("\nSync run")
