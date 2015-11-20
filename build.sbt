@@ -13,6 +13,6 @@ libraryDependencies ++= {
     "com.typesafe.akka"  %% "akka-testkit"                      % akkaV        % "test",
     "com.typesafe.akka"  %% "akka-stream-experimental"          % akkaStreamV,
     "org.scalatest"      %% "scalatest"                         % scalaTestV   % "test",
-    "org.spire-math"     %% "cats"                              % "0.2.0"
+    "org.spire-math"     %% "cats"                              % "0.3.0"
   )
 }
