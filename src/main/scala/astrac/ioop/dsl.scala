@@ -21,6 +21,13 @@ object dsl {
     case object SucceedIfAbsent extends DeleteMode
   }
 
+  sealed trait WriteMode
+
+  object WriteMode {
+    case object FailIfExists extends WriteMode
+    case object Truncate extends WriteMode
+  }
+
   case class FileResource(file: Path)
 
   type Ioop[T] = Free[IoopAst, T]
@@ -65,7 +72,18 @@ object dsl {
     } yield d
   }
 
-  def write(path: Path, data: Iterable[String]): Ioop[Unit] = Free.liftF(WriteFile(path, data))
+  def write(path: Path, data: Iterable[String], mode: WriteMode = WriteMode.Truncate): Ioop[Unit] = mode match {
+
+    case WriteMode.FailIfExists => for {
+      e <- exists(path)
+      w <- if (!e) Free.liftF(WriteFile(path, data)) else failure(new FileAlreadyExistsException(path.toString()))
+    } yield w
+
+    case WriteMode.Truncate => for {
+      _ <- delete(path, DeleteMode.SucceedIfAbsent)
+      w <- Free.liftF(WriteFile(path, data))
+    } yield w
+  }
 
   def read[Out](path: Path, handler: Iterable[String] => Out): Ioop[Out] = Free.liftF(ReadFile(path, handler))
 
